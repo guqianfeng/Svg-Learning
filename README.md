@@ -3,6 +3,7 @@
 # 文档
 
 * [SVG元素参考](https://developer.mozilla.org/zh-CN/docs/Web/SVG/Element)
+* [国外大佬总结](http://tutorials.jenkov.com/svg/index.html)
 
 # 记录学习的过程
 
