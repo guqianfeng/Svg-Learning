@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数据驱动视图</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  
+</body>
+<script>
+  {
+    const totalWidth = window.innerWidth
+    const totalHeight = window.innerHeight
+    const centerX = totalWidth / 2
+    const centerY = totalHeight / 2
+    const rootR = 90
+    const rootWidth = 5
+    const normalR = 50
+    const normalWidth = 3
+    const data = {
+      root: {
+        text: '梅利奥猪猪'
+      },
+      otherNodes: [
+        {
+          x: 100,
+          y: 100,
+          text: 'svg学习'
+        },
+        {
+          x: 800,
+          y: 500,
+          text: 'canvas学习'
+        },
+        {
+          x: 200,
+          y: 800,
+          text: 'test'
+        }
+      ]
+    }
+    const createTag = (tagName, attrs) => {
+      const ns = "http://www.w3.org/2000/svg"
+      const tag = document.createElementNS(ns, tagName)
+      for (attr in attrs) {
+        tag.setAttribute(attr, attrs[attr])
+      }
+      return tag
+    }
+    const init = () => {
+      const svgTag = createTag('svg', {
+        width: '100%',
+        height: '100vh'
+      })
+      document.body.appendChild(svgTag)
+      
+      data.otherNodes.forEach(nodeInfo => {
+        createOtherNode(nodeInfo, svgTag)
+      });
+      createRoot(svgTag)
+    }
+    const createRoot = (svgTag) => {
+      const gTag = createTag('g', {
+        "style": "cursor: pointer"
+      })
+      const circleTag = createTag("circle", {
+        "cx": centerX,
+        "cy": centerY,
+        "r": rootR,
+        "stroke": "red",
+        "stroke-width": rootWidth,
+        "fill": "white"
+      })
+      const textTag = createTag("text", {
+        "x": centerX,
+        "y": centerY ,
+        "stroke": "red",
+        "text-anchor": "middle",
+        "font-size": 30,
+        "fill": "none"
+      })
+      textTag.innerHTML = data.root.text
+      gTag.appendChild(circleTag)
+      gTag.appendChild(textTag)
+      svgTag.appendChild(gTag)
+    }
+    const createOtherNode = (nodeInfo, svgTag) => {
+      // console.log(nodeInfo, svgTag)
+      const glineTag = createTag('g', {
+        "style": "cursor: pointer"
+      })
+      const lineTag = createTag('line', {
+        "x1": nodeInfo.x,
+        "y1": nodeInfo.y,
+        "x2": centerX,
+        "y2": centerY,
+        "stroke": "skyblue",
+        "stroke-width": normalWidth,
+      })
+      const rectTag = createTag('rect', {
+        "x": (nodeInfo.x + centerX) / 2 - 20 / 2,
+        "y": (nodeInfo.y + centerY) / 2 - 20 / 2,
+        "width": 20,
+        "height": 20,
+        "fill": "skyblue",
+        "rx": 5
+      })
+      const lineTextTag = createTag('text', {
+        "x": (nodeInfo.x + centerX) / 2,
+        "y": (nodeInfo.y + centerY) / 2 + 5,
+        "stroke": "white",
+        "text-anchor": "middle",
+        "fill": "none"
+      })
+      lineTextTag.innerHTML = '?'
+      glineTag.appendChild(rectTag)
+      glineTag.appendChild(lineTag)
+      glineTag.appendChild(lineTextTag)
+      
+      const gCircleTag = createTag('g', {
+        "style": "cursor: pointer"
+      })
+      const circleTag = createTag("circle", {
+        "cx": nodeInfo.x,
+        "cy": nodeInfo.y,
+        "r": normalR,
+        "fill": "skyblue",
+      })
+      const textTag = createTag("text", {
+        "x": nodeInfo.x,
+        "y": nodeInfo.y ,
+        "stroke": "white",
+        "text-anchor": "middle",
+        "font-size": 16,
+        "fill": "none"
+      })
+      textTag.innerHTML = nodeInfo.text
+      gCircleTag.appendChild(circleTag)
+      gCircleTag.appendChild(textTag)
+
+
+      svgTag.appendChild(glineTag)
+      svgTag.appendChild(gCircleTag)
+    }
+
+    init()
+  }
+</script>
+</html>
