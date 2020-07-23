@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>demo交互</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    body {
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <svg width="100%" height="100vh">
+    <g style="cursor: pointer">
+      <circle cx="200" cy="200" r="50" fill="transparent" stroke="red"></circle>
+    </g>
+  </svg>
+  <script>
+    {
+      const {abs} = Math
+      let oG = document.querySelector('g')
+      // console.log(oG)
+      oG.addEventListener('mouseenter', function () {
+        // console.log('circle enter', this.querySelector('circle'))
+        anim(this.querySelector('circle'), 100)
+      })
+      oG.addEventListener('mouseleave', function () {
+        // console.log('circle leave')
+        anim(this.querySelector('circle'), 50)
+      })
+
+      function anim (el, target) {
+        let now = el.getAttribute('r') * 1
+        // console.log(now)
+        let dis = target - now
+        let speed = dis / 10
+        if (abs(speed) < 1 && abs(dis) < 1){
+          cancelAnimationFrame(el.timer)
+          el.setAttribute('r', target)
+        } else {
+          el.timer = requestAnimationFrame(() => {
+            now += speed
+            el.setAttribute('r', now)
+            anim(el, target)
+          })
+        }
+      }
+    }
+  </script>
+</body>
+</html>

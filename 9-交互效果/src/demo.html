@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>demo圆的fill问题</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    body {
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <svg width="100%" height="100vh">
+    <g style="cursor: pointer">
+      <circle cx="200" cy="200" r="50" fill="transparent" stroke="red"></circle>
+    </g>
+  </svg>
+  <script>
+    {
+      let oG = document.querySelector('g')
+      // console.log(oG)
+      oG.addEventListener('mouseenter', function () {
+        console.log('circle enter')
+      })
+      oG.addEventListener('mouseleave', function () {
+        console.log('circle leave')
+      })
+    }
+  </script>
+</body>
+</html>
