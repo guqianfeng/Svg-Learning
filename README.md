@@ -9,6 +9,7 @@
 
 * line线宽为1，不容易被`cursor:pointer`选中，可以创建一条线宽更粗的，颜色为透明的线，提升用户体验
 * text元素innerHTML在IE不支持，可以使用textContent
+* 贝塞尔曲线文字居中可以使用textPath元素
 
 # 记录学习的过程
 
