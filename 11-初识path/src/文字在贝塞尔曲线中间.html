@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文字在贝塞尔曲线中间</title>
+</head>
+<body>
+  <svg width="500" height="500">
+    <text text-anchor="middle" font-size="20">
+      <textPath xlink:href="#gqf" startOffset="200">123456</textPath>
+    </text>
+    <path d="M100 300 C200 50 300 150 400 300" stroke="red" fill="none" id="gqf"></path>
+  </svg>
+</body>
+</html>
