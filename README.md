@@ -7,6 +7,17 @@
 
 # Tips
 
+* 动态创建svg元素使用`document.createElement`会有问题，可以使用如下代码
+  ```js
+  const createTag = (tagName, attrs) => {
+    const ns = "http://www.w3.org/2000/svg";
+    const tag = document.createElementNS(ns, tagName);
+    for (attr in attrs) {
+      tag.setAttribute(attr, attrs[attr]);
+    }
+    return tag;
+  };  
+  ```
 * 画图的效果是使用stroke-dasharray和stroke-dashoffset实现
   * stroke-dasharray - 虚线，当值(path可以通过getTotalLength())设置过大的时候，图形也是完整显示的
   * stroke-dashoffset - 设置偏移量，和上述的值一致，这样图形就不见了
@@ -31,3 +42,4 @@
   * [11-初识path](./11-初识path/11-初识path.md)
   * [12-简单饼图原理](./12-简单饼图原理/12-简单饼图原理.md)
   * [13-动态生成饼图](./13-动态生成饼图/13-动态生成饼图.md)
+  * [14-动画](./14-动画/14-动画.md)
