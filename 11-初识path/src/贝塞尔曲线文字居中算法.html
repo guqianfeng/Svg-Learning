@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>贝塞尔曲线</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      body {
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      {
+        const { random, floor } = Math;
+        const randomRange = (min, max) => {
+          if (!max) {
+            max = min;
+            min = 0;
+          }
+          if (min > max) {
+            [min, max] = [max, min];
+          }
+          return floor(random() * (max - min) + min);
+        };
+        const fullWidth = window.innerWidth;
+        const fullHeight = window.innerHeight;
+        const createTag = (tagName, attrs) => {
+          const tag = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            tagName
+          );
+          for (let attr in attrs) {
+            tag.setAttribute(attr, attrs[attr]);
+          }
+          return tag;
+        };
+
+        const svgDom = createTag("svg", {
+          width: "100%",
+          height: "100vh",
+        });
+        document.body.appendChild(svgDom);
+
+        const createRandomPath = () => {
+          let x1 = randomRange(fullWidth);
+          let y1 = randomRange(fullHeight);
+          let x2 = randomRange(fullWidth);
+          let y2 = randomRange(fullHeight);
+          // console.log(x1, y1, x2, y2)
+          let c1x = randomRange(fullWidth);
+          let c1y = randomRange(fullHeight);
+
+          const ctrl1Dom = createTag("circle", {
+            cx: c1x,
+            cy: c1y,
+            r: 10,
+            fill: "skyblue",
+            style: "cursor: crosshair",
+            class: "ctrl-dom",
+          });
+          svgDom.appendChild(ctrl1Dom);
+
+          const line1 = createTag("line", {
+            x1: x1,
+            y1: y1,
+            x2: c1x,
+            y2: c1y,
+            stroke: "skyblue",
+            class: "line-0",
+          });
+          svgDom.appendChild(line1);
+
+          let c2x = randomRange(fullWidth);
+          let c2y = randomRange(fullHeight);
+
+          const ctrl2Dom = createTag("circle", {
+            cx: c2x,
+            cy: c2y,
+            r: 10,
+            fill: "skyblue",
+            style: "cursor: crosshair",
+            class: "ctrl-dom",
+          });
+          svgDom.appendChild(ctrl2Dom);
+
+          const line2 = createTag("line", {
+            x1: x2,
+            y1: y2,
+            x2: c2x,
+            y2: c2y,
+            stroke: "skyblue",
+            class: "line-1",
+          });
+          svgDom.appendChild(line2);
+
+          // console.log(c1x, c1y, c2x, c2y)
+          const pathDom = createTag("path", {
+            d: `M${x1}, ${y1} C${c1x}, ${c1y} ${c2x}, ${c2y} ${x2}, ${y2}`,
+            stroke: "red",
+            "stroke-width": 3,
+            fill: "none",
+            class: "main-path",
+          });
+          console.log(x1, y1, x2, y2);
+          svgDom.appendChild(pathDom);
+
+          let startPoint = {
+            x: x1,
+            y: y1,
+          };
+          let ctrl1Point = {
+            x: c1x,
+            y: c1y,
+          };
+          let ctrl2Point = {
+            x: c2x,
+            y: c2y,
+          };
+          let endPoint = {
+            x: x2,
+            y: y2,
+          };
+
+          let middlePoint1 = {
+            x: (startPoint.x + ctrl1Point.x) / 2,
+            y: (startPoint.y + ctrl1Point.y) / 2,
+          };
+          let middlePoint2 = {
+            x: (ctrl2Point.x + ctrl1Point.x) / 2,
+            y: (ctrl2Point.y + ctrl1Point.y) / 2,
+          };
+          let middlePoint3 = {
+            x: (endPoint.x + ctrl2Point.x) / 2,
+            y: (endPoint.y + ctrl2Point.y) / 2,
+          };
+          let middlePoint4 = {
+            x: (middlePoint1.x + middlePoint2.x) / 2,
+            y: (middlePoint1.y + middlePoint2.y) / 2,
+          };
+          let middlePoint5 = {
+            x: (middlePoint2.x + middlePoint3.x) / 2,
+            y: (middlePoint2.y + middlePoint3.y) / 2,
+          };
+          let middlePoint6 = {
+            x: (middlePoint4.x + middlePoint5.x) / 2,
+            y: (middlePoint4.y + middlePoint5.y) / 2,
+          };
+          console.log(middlePoint6);
+          const oTextMiddle = createTag("text", {
+            stroke: "black",
+            "font-size": "20",
+            "text-anchor": "middle",
+            x: middlePoint6.x,
+            y: middlePoint6.y,
+            "class": "middle-text",
+            "style": "user-select: none;"
+          });
+          oTextMiddle.textContent = "hello";
+          svgDom.appendChild(oTextMiddle);
+
+          addEvent();
+        };
+
+        createRandomPath();
+
+        function addEvent() {
+          let ctrlDoms = document.querySelectorAll(".ctrl-dom");
+          // console.log(ctrlDoms)
+          function move(e) {
+            // console.log('move')
+            let el = window.ctrlDom;
+            el.setAttribute("cx", e.clientX);
+            el.setAttribute("cy", e.clientY);
+            let pathDom = document.querySelector(".main-path");
+            // console.log(pathDom)
+            let pathStr = pathDom.getAttribute("d");
+            let pathStrArr = pathStr.split(" ");
+            let pointArr = [];
+            for (var i = 0; i < pathStrArr.length; i++) {
+              var item = pathStrArr[i];
+              var numberMatch = item.match(/-?\d+/g);
+              // console.log(numberMatch)
+              if (numberMatch) {
+                pointArr.push(numberMatch[0]);
+              }
+            }
+            // console.log(pathStrArr, pointArr)
+            // pointArr 索引01是起点 23控制点1 45控制点2 67终点
+            if (window.ctrlIndex == 0) {
+              pointArr[2] = e.clientX;
+              pointArr[3] = e.clientY;
+            } else {
+              pointArr[4] = e.clientX;
+              pointArr[5] = e.clientY;
+            }
+            pointArr = pointArr.map((item) => parseFloat(item));
+            // console.log(pointArr);
+            let startPoint = {
+              x: pointArr[0],
+              y: pointArr[1],
+            };
+            let ctrl1Point = {
+              x: pointArr[2],
+              y: pointArr[3],
+            };
+            let ctrl2Point = {
+              x: pointArr[4],
+              y: pointArr[5],
+            };
+            let endPoint = {
+              x: pointArr[6],
+              y: pointArr[7],
+            };
+
+            let middlePoint1 = {
+              x: (startPoint.x + ctrl1Point.x) / 2,
+              y: (startPoint.y + ctrl1Point.y) / 2,
+            };
+            let middlePoint2 = {
+              x: (ctrl2Point.x + ctrl1Point.x) / 2,
+              y: (ctrl2Point.y + ctrl1Point.y) / 2,
+            };
+            let middlePoint3 = {
+              x: (endPoint.x + ctrl2Point.x) / 2,
+              y: (endPoint.y + ctrl2Point.y) / 2,
+            };
+            let middlePoint4 = {
+              x: (middlePoint1.x + middlePoint2.x) / 2,
+              y: (middlePoint1.y + middlePoint2.y) / 2,
+            };
+            let middlePoint5 = {
+              x: (middlePoint2.x + middlePoint3.x) / 2,
+              y: (middlePoint2.y + middlePoint3.y) / 2,
+            };
+            let middlePoint6 = {
+              x: (middlePoint4.x + middlePoint5.x) / 2,
+              y: (middlePoint4.y + middlePoint5.y) / 2,
+            };
+            // console.log(middlePoint6);
+            const middleText = document.querySelector('.middle-text')
+            middleText.setAttribute("x", middlePoint6.x)
+            middleText.setAttribute("y", middlePoint6.y)
+            pointArr[0] = "M" + pointArr[0];
+            pointArr[2] = "C" + pointArr[2];
+            pathDom.setAttribute("d", pointArr.join(" "));
+
+            let line = document.querySelector(".line-" + window.ctrlIndex);
+            // console.log(line)
+            line.setAttribute("x2", e.clientX);
+            line.setAttribute("y2", e.clientY);
+          }
+          ctrlDoms.forEach((ctrl, index) => {
+            ctrl.addEventListener("mousedown", function (e) {
+              // console.log('down')
+              window.ctrlDom = this;
+              window.ctrlIndex = index;
+              document.addEventListener("mousemove", move);
+              document.addEventListener(
+                "mouseup",
+                function (e) {
+                  // console.log('up')
+                  document.removeEventListener("mousemove", move);
+                },
+                { once: true }
+              );
+            });
+          });
+        }
+      }
+    </script>
+  </body>
+</html>

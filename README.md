@@ -26,6 +26,13 @@
 * text元素innerHTML在IE不支持，可以使用textContent
 * 贝塞尔曲线文字居中可以使用textPath元素，配合偏移量属性startOffset，详细可见11章的源码案例
 * 动态生成textPath，设置xlink:href属性需要`oTextPath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', "#idName")`
+* 也可以通过算法，算6次中点，得到曲线中点，案例也在第11章
+  * 起始点与控制点1的中点A
+  * 控制点1与控制点2中点B
+  * 控制点2与结束点中点C
+  * 取AB中点D
+  * 取BC中点E
+  * 取DE中点
 
 # 记录学习的过程
 
