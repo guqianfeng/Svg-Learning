@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>案例demo</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      body {
+        overflow: hidden;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <svg>
+      <path
+        d="M300,200h350a5,5,0,0,1,5,5v400a5,5,0,0,1,-5,5h-350a5,5,0,0,1,-5,-5v-400a5,5,0,0,1,5,-5z"
+        stroke="red"
+        fill="none"
+      ></path>
+    </svg>
+    <script>
+      {
+        const createTag = (tagName, attrs) => {
+          const ns = "http://www.w3.org/2000/svg";
+          const tag = document.createElementNS(ns, tagName);
+          for (attr in attrs) {
+            tag.setAttribute(attr, attrs[attr]);
+          }
+          return tag;
+        };
+
+        let oSvg = document.querySelector("svg");
+        oSvg.setAttribute("width", window.innerWidth);
+        oSvg.setAttribute("height", window.innerHeight);
+
+        // 把当前的path的关键数据拿出来
+        let nodeX = 300;
+        let nodeY = 200;
+        let nodeWidth = 350;
+        let nodeHeight = 400;
+        let centerX = (nodeX + nodeX + nodeWidth) / 2;
+        let bottomY = nodeY + nodeHeight;
+        
+
+        let oText = createTag('text', {
+          x: centerX,
+          y: bottomY,
+          stroke: "red",
+          "text-anchor": "middle"
+        })
+        oText.textContent = '测试';
+        oSvg.appendChild(oText);
+
+        let oRect = createTag('rect', {
+          x: nodeX + 20,
+          y: nodeY + 15,
+          width: nodeWidth - 40,
+          height: nodeHeight - 54,
+          fill: 'red'
+        })// 模拟图片 偏移量是参考竞品爱莫脑图的，这些偏移量是固定的值
+
+        let offsetH = bottomY - ((nodeY + 15) + (nodeHeight - 54)); // y坐标 高度
+        let limitWidth = 50;
+        let limitHeight = 50;
+
+        oRect.addEventListener('click', function () {
+          let start = {
+            x: 0,
+            y: 0
+          }
+          let oCircle = document.querySelector('.ope-img');
+          if(!oCircle) {
+            // 没有就创建，防止多次点击图片添加circle元素
+            oCircle = createTag('circle', {
+              cx: this.getAttribute("x") * 1 + this.getAttribute("width") * 1,
+              cy: this.getAttribute("y") * 1 + this.getAttribute("height") * 1,
+              r: 10,
+              class: "ope-img",
+              fill: "skyblue",
+              cursor: "crosshair"
+            })
+            oSvg.appendChild(oCircle);
+            const move = function (e) {
+              let now = {
+                x: e.clientX,
+                y: e.clientY
+              }
+              let dis = {
+                x: now.x - start.x,
+                y: now.y - start.y
+              }
+              let cx = oCircle.getAttribute('cx') * 1;
+              let cy = oCircle.getAttribute('cy') * 1;
+              cx += dis.x;
+              cy += dis.y;
+              let rectX = oRect.getAttribute('x') * 1;
+              let rectY = oRect.getAttribute('y') * 1;
+              let width = cx - rectX;
+              let height = cy - rectY;
+              if (width < limitWidth) {
+                width = limitWidth;
+                cx = limitWidth + rectX;
+              }
+              if (height < limitHeight) {
+                height = limitHeight;
+                cy = limitHeight + rectY;
+              }
+              oCircle.setAttribute('cx', cx);
+              oCircle.setAttribute('cy', cy);
+              oRect.setAttribute("width", width);
+              oRect.setAttribute("height", height);
+              start.x = now.x;
+              start.y = now.y;
+            }
+            oCircle.addEventListener("mousedown", function (e) {
+              start.x = e.clientX,
+              start.y = e.clientY
+              document.addEventListener("mousemove", move)
+              document.addEventListener("mouseup", function() {
+                document.removeEventListener("mousemove", move)
+                oCircle.remove();
+                // 改变图片x,y坐标，宽度高度不需要改变
+                let oRectWidth = oRect.getAttribute("width") * 1;
+                let oRectHeight = oRect.getAttribute("height") * 1;
+                let nowX = centerX - oRectWidth / 2;
+                let nowY = bottomY - offsetH - oRectHeight;
+                oRect.setAttribute("x", nowX);
+                oRect.setAttribute("y", nowY);
+                // 修改节点path, 圆角不变，xy及水平距离垂直距离
+                let oPath = document.querySelector("path");
+                /**
+                  偏移量为固定的
+                */
+                let pathX = nowX - 20;
+                let pathY = nowY - 15;
+                let pathWidth = oRectWidth + 40;
+                let pathHeight = oRectHeight + 54;
+                oPath.setAttribute('d', `M${pathX},${pathY}h${pathWidth}a5,5,0,0,1,5,5v${pathHeight}a5,5,0,0,1,-5,5h${-pathWidth}a5,5,0,0,1,-5,-5v${-pathHeight}a5,5,0,0,1,5,-5z`)
+              }, {once: true})
+            })
+          }
+        })
+        oSvg.appendChild(oRect);
+      }
+    </script>
+  </body>
+</html>

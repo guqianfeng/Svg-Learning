@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>动态生成饼图</title>
+    <style>
+      path {
+        animation: anim 10s linear 1 forwards;
+      }
+      @keyframes anim {
+        to {
+          stroke-dashoffset: 0
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="500" height="500"></svg>
+    <script>
+      {
+        const {PI, cos, sin} = Math;
+        const deg2Rad = deg => deg * PI / 180;
+        const createTag = (tagName, attrs) => {
+          const ns = "http://www.w3.org/2000/svg";
+          const tag = document.createElementNS(ns, tagName);
+          for (attr in attrs) {
+            tag.setAttribute(attr, attrs[attr]);
+          }
+          return tag;
+        };
+        const oSvg = document.querySelector("svg");
+        const centerX = 250;
+        const centerY = 250;
+        const outerR = 200;
+        const innerR = 150;
+        const colorArr = [
+          "red",
+          "green",
+          "blue",
+          "yellow",
+          "black",
+          "red",
+          "green",
+          "blue",
+          "yellow",
+          "black",
+        ];
+        const numberArr = [20, 10, 30, 15, 25]; //注意总和需要时100
+        const degArr = numberArr.map((item) => 360 * item / 100);
+        // console.log(degArr);
+        const outerPoint = [
+          {
+            x: centerX + outerR,
+            y: centerY,
+          }
+        ]
+        const innerPoint = [
+          {
+            x: centerX + innerR,
+            y: centerY
+          }
+        ]
+        // console.log(outerPoint, innerPoint)
+        let sumDeg = 0;
+        for (let i = 0; i < degArr.length; i++) {
+          let deg = degArr[i];
+          sumDeg += deg;
+          let outerX = cos(deg2Rad(sumDeg)) * outerR +  centerX;
+          let outerY = sin(deg2Rad(sumDeg)) * outerR +  centerX;
+          outerPoint.push({
+            x: outerX,
+            y: outerY
+          })
+          let innerX = cos(deg2Rad(sumDeg)) * innerR +  centerX;
+          let innerY = sin(deg2Rad(sumDeg)) * innerR +  centerX;
+          innerPoint.push({
+            x: innerX,
+            y: innerY
+          })
+        }
+        // console.log(outerPoint, innerPoint)
+        for (let i=0; i < innerPoint.length; i++) {
+          if (i == innerPoint.length - 1) {
+            break;
+          }
+          let innerP = innerPoint[i];
+          let outerP = outerPoint[i];
+          let innerNextP = innerPoint[i+1];
+          let outerNextP = outerPoint[i+1];
+          let oPath = createTag('path', {
+            "stroke": colorArr[i],
+            "fill": "none",
+            "d": `
+                  M${outerP.x} ${outerP.y} A${outerR} ${outerR} 0 0 1 ${outerNextP.x} ${outerNextP.y}
+                  L${innerNextP.x} ${innerNextP.y} A${innerR} ${innerR} 0 0 0 ${innerP.x} ${innerP.y} Z
+                  `
+          })
+          console.log(oPath.getTotalLength())
+          oPath.setAttribute('stroke-dasharray', Math.floor(oPath.getTotalLength()))
+          oPath.setAttribute('stroke-dashoffset', Math.floor(oPath.getTotalLength()))
+          oSvg.appendChild(oPath)
+        }
+      }
+    </script>
+  </body>
+</html>

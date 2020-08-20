@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>动态创建折线</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      body {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      svg {
+        border: 1px solid black;
+        cursor: crosshair;
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="500" height="500"></svg>
+    <script>
+      {
+        const createTag = (tagName, attrs) => {
+          const ns = "http://www.w3.org/2000/svg";
+          const tag = document.createElementNS(ns, tagName);
+          for (attr in attrs) {
+            tag.setAttribute(attr, attrs[attr]);
+          }
+          return tag;
+        };
+        const oSvg = document.querySelector("svg");
+        const points = [];
+        let polylineDom = null;
+        // console.log(oSvg)
+        oSvg.addEventListener("mousedown", function (e) {
+          const {left, top} = oSvg.getBoundingClientRect()
+          let x = e.clientX - left
+          let y = e.clientY - top
+          if (!polylineDom) {
+            polylineDom = createTag('polyline', {
+              'stroke-width': 2,
+              'stroke': 'red',
+              'fill': 'none'
+            })
+            this.appendChild(polylineDom)
+          }
+          // console.log(x, y)
+          points.push(x, y)
+          polylineDom.setAttribute('points', points.join(' '))
+          const circleDom = createTag('circle', {
+            'fill': 'white',
+            'cx': x,
+            'cy': y,
+            'r': 3,
+            'stroke': 'red'
+          })
+          this.appendChild(circleDom)
+
+          function move (e) {
+            const {left, top} = oSvg.getBoundingClientRect()
+            let x = e.clientX - left
+            let y = e.clientY - top
+            // console.log(x, y)
+            polylineDom.setAttribute('points', points.join(' ') + ' ' + x + ' ' + y)
+          }
+
+          oSvg.addEventListener("mousemove", move)
+
+          oSvg.addEventListener("contextmenu", function(e){
+            e.preventDefault()
+            this.removeEventListener('mousemove', move)
+          })
+        });
+      }
+    </script>
+  </body>
+</html>
