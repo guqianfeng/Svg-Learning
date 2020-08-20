@@ -7,6 +7,8 @@
 
 # Tips
 
+* 根目录下Demo文件夹下都是自己写svg的demo，大家可以用来参考&学习
+
 * 动态创建svg元素使用`document.createElement`会有问题，可以使用如下代码
   ```js
   const createTag = (tagName, attrs) => {
