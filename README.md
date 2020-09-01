@@ -35,7 +35,8 @@
     * 取AB中点D
     * 取BC中点E
     * 取DE中点
-* 矩阵的六个值，第一个和第四个为缩放scale的x和y,第五个和第六个值为translate偏移X和Y    
+* transform矩阵的六个值，第一个和第四个为缩放scale的x和y,第五个和第六个值为translate偏移X和Y    
+* 文字换行，可以在text标签里包裹tspan，通过改变x和y的值来换行，也可以使用foreignObject
 
 # 记录学习的过程
 
